@@ -1,11 +1,11 @@
-# Multi-hop Question Generation with Graph Convolutional Network (MulQG)
+# Improve Query Focused Abstractive Summarization byIncorporating Answer Relevance (QFS)
 <img src="plot/pytorch-logo-dark.png" width="10%"> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 
 <img align="right" src="plot/HKUST.jpg" width="12%">
 
 This is the implementation of the paper:
 
-**Multi-hop Question Generation with Graph Convolutional Network**. **[Dan Su](https://github.com/Iamfinethanksu)**, [Yan Xu](https://yana-xuyan.github.io), [Wenliang Dai](https://wenliangdai.github.io), Ziwei Ji, Tiezheng Yu, Pascale Fung **Findings of EMNLP 2020** [[PDF]](https://www.aclweb.org/anthology/2020.findings-emnlp.416.pdf)
+**Improve Query Focused Abstractive Summarization byIncorporating Answer Relevance**. **[Dan Su](https://github.com/Iamfinethanksu)**, Tiezheng Yu, Pascale Fung **Findings of ACL 2021** [[PDF]](https://www.aclweb.org/anthology/2020.findings-emnlp.416.pdf)
 
 If you use any source codes or datasets included in this toolkit in your work, please cite the following paper. The bibtex is listed below:
 <pre>
@@ -20,20 +20,8 @@ If you use any source codes or datasets included in this toolkit in your work, p
 
 ## Abstract
 
-Multi-hop Question Generation (QG) aims to generate answer-related questions by *aggregating* and *reasoning* over multiple scattered evidence from different paragraphs. It is a more challenging yet under-explored task compared to conventional single-hop QG, where the questions are generated from the sentence containing the answer or nearby sentences in the same paragraph without complex reasoning. To address the additional challenges in multi-hop QG, we propose Multi-Hop Encoding Fusion Network for Question Generation (MulQG), which does context encoding in multiple hops with Graph Convolutional Network and encoding fusion via an Encoder Reasoning Gate. To the best of our knowledge, we are the first to tackle the challenge of multi-hop reasoning over paragraphs without any sentence-level information. Empirical results on HotpotQA dataset demonstrate the effectiveness of our method, in comparison with baselines on automatic evaluation metrics. Moreover, from the human evaluation, our proposed model is able to generate fluent questions with high completeness and outperforms the strongest baseline by 20.8% in the multi-hop evaluation.
+Query  focused  summarization  (QFS)  modelsaim to generate summaries from source docu-ments that can answer the given query.  Mostprevious  work  on  QFS  only  considers  thequery relevance criterion when producing thesummary.  However, studying the effect of an-swer relevance in the summary generating pro-cess is also important.  In this paper, we pro-pose  QFS-BART,  a  model  that  incorporatesthe explicit answer relevance of the source doc-uments given the query via a question answer-ing  model,  to  generate  coherent  and  answer-related  summaries.   Furthermore,  our  modelcan  take  advantage  of  large  pre-trained  mod-els  which  improve  the  summarization  perfor-mance significantly.  Empirical results on theDebatepedia  dataset  show  that  the  proposedmodel achieves the new state-of-the-art perfor-mance
 
-## MulQG Framework:
-<p align="center">
-<img src="plot/main.png" width="90%" />
-</p>
-
-Overview of our MulQG framework. In the encoding stage, we pass the initial context encoding C_0 and answer encoding A_0 to the *Answer-aware Context Encoder* to obtain the first context encoding C_1, then C_1 and A_0 will be used to update a multi-hop answer encoding A_1 via the *GCN-based Entity-aware Answer Encoder*, and we use A_1 and C_1 back to the *Answer-aware Context Encoder* to obtain C_2. The final context encoding C_{final} are obtained from the *Encoder Reasoning Gate* which operates over C_1 and C_2, and will be used in the max-out based decoding stage.
-
-<p align="center">
-<img src="plot/graph.png" width="40%" />
-</p>
-
-The illustration of GCN-based Entity-aware Answer Encoder.
 
 
 ## Dependencies
