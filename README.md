@@ -1,66 +1,157 @@
+# Multi-hop Question Generation with Graph Convolutional Network (MulQG)
+<img src="plot/pytorch-logo-dark.png" width="10%"> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+
+<img align="right" src="plot/HKUST.jpg" width="12%">
+
+This is the implementation of the paper:
+
+**Multi-hop Question Generation with Graph Convolutional Network**. **[Dan Su](https://github.com/Iamfinethanksu)**, [Yan Xu](https://yana-xuyan.github.io), [Wenliang Dai](https://wenliangdai.github.io), Ziwei Ji, Tiezheng Yu, Pascale Fung **Findings of EMNLP 2020** [[PDF]](https://www.aclweb.org/anthology/2020.findings-emnlp.416.pdf)
+
+If you use any source codes or datasets included in this toolkit in your work, please cite the following paper. The bibtex is listed below:
+<pre>
+@inproceedings{su2020multi,
+  title={Multi-hop Question Generation with Graph Convolutional Network},
+  author={Su, Dan and Xu, Yan and Dai, Wenliang and Ji, Ziwei and Yu, Tiezheng and Fung, Pascale},
+  booktitle={Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: Findings},
+  pages={4636--4647},
+  year={2020}
+}
+</pre>
+
+## Abstract
+
+Multi-hop Question Generation (QG) aims to generate answer-related questions by *aggregating* and *reasoning* over multiple scattered evidence from different paragraphs. It is a more challenging yet under-explored task compared to conventional single-hop QG, where the questions are generated from the sentence containing the answer or nearby sentences in the same paragraph without complex reasoning. To address the additional challenges in multi-hop QG, we propose Multi-Hop Encoding Fusion Network for Question Generation (MulQG), which does context encoding in multiple hops with Graph Convolutional Network and encoding fusion via an Encoder Reasoning Gate. To the best of our knowledge, we are the first to tackle the challenge of multi-hop reasoning over paragraphs without any sentence-level information. Empirical results on HotpotQA dataset demonstrate the effectiveness of our method, in comparison with baselines on automatic evaluation metrics. Moreover, from the human evaluation, our proposed model is able to generate fluent questions with high completeness and outperforms the strongest baseline by 20.8% in the multi-hop evaluation.
+
+## MulQG Framework:
 <p align="center">
-    <br>
-    <img src="https://raw.githubusercontent.com/huggingface/transformers/master/docs/source/imgs/transformers_logo_name.png" width="400"/>
-    <br>
-<p>
-<p align="center">
-    <a href="https://circleci.com/gh/huggingface/transformers">
-        <img alt="Build" src="https://img.shields.io/circleci/build/github/huggingface/transformers/master">
-    </a>
-    <a href="https://github.com/huggingface/transformers/blob/master/LICENSE">
-        <img alt="GitHub" src="https://img.shields.io/github/license/huggingface/transformers.svg?color=blue">
-    </a>
-    <a href="https://huggingface.co/transformers/index.html">
-        <img alt="Documentation" src="https://img.shields.io/website/http/huggingface.co/transformers/index.html.svg?down_color=red&down_message=offline&up_message=online">
-    </a>
-    <a href="https://github.com/huggingface/transformers/releases">
-        <img alt="GitHub release" src="https://img.shields.io/github/release/huggingface/transformers.svg">
-    </a>
+<img src="plot/main.png" width="90%" />
 </p>
 
-<h3 align="center">
-<p>State-of-the-art Natural Language Processing for PyTorch and TensorFlow 2.0
-</h3>
+Overview of our MulQG framework. In the encoding stage, we pass the initial context encoding C_0 and answer encoding A_0 to the *Answer-aware Context Encoder* to obtain the first context encoding C_1, then C_1 and A_0 will be used to update a multi-hop answer encoding A_1 via the *GCN-based Entity-aware Answer Encoder*, and we use A_1 and C_1 back to the *Answer-aware Context Encoder* to obtain C_2. The final context encoding C_{final} are obtained from the *Encoder Reasoning Gate* which operates over C_1 and C_2, and will be used in the max-out based decoding stage.
 
-🤗 Transformers (formerly known as `pytorch-transformers` and `pytorch-pretrained-bert`) provides state-of-the-art general-purpose architectures (BERT, GPT-2, RoBERTa, XLM, DistilBert, XLNet, T5, CTRL...) for Natural Language Understanding (NLU) and Natural Language Generation (NLG) with over thousands of pretrained models in 100+ languages and deep interoperability between PyTorch & TensorFlow 2.0.
+<p align="center">
+<img src="plot/graph.png" width="40%" />
+</p>
 
-### Recent contributors
-[![](https://sourcerer.io/fame/clmnt/huggingface/transformers/images/0)](https://sourcerer.io/fame/clmnt/huggingface/transformers/links/0)[![](https://sourcerer.io/fame/clmnt/huggingface/transformers/images/1)](https://sourcerer.io/fame/clmnt/huggingface/transformers/links/1)[![](https://sourcerer.io/fame/clmnt/huggingface/transformers/images/2)](https://sourcerer.io/fame/clmnt/huggingface/transformers/links/2)[![](https://sourcerer.io/fame/clmnt/huggingface/transformers/images/3)](https://sourcerer.io/fame/clmnt/huggingface/transformers/links/3)[![](https://sourcerer.io/fame/clmnt/huggingface/transformers/images/4)](https://sourcerer.io/fame/clmnt/huggingface/transformers/links/4)[![](https://sourcerer.io/fame/clmnt/huggingface/transformers/images/5)](https://sourcerer.io/fame/clmnt/huggingface/transformers/links/5)[![](https://sourcerer.io/fame/clmnt/huggingface/transformers/images/6)](https://sourcerer.io/fame/clmnt/huggingface/transformers/links/6)[![](https://sourcerer.io/fame/clmnt/huggingface/transformers/images/7)](https://sourcerer.io/fame/clmnt/huggingface/transformers/links/7)
-
-### Features
-- High performance on NLU and NLG tasks
-- Low barrier to entry for educators and practitioners
-
-State-of-the-art NLP for everyone
-- Deep learning researchers
-- Hands-on practitioners
-- AI/ML/NLP teachers and educators
-
-Lower compute costs, smaller carbon footprint
-- Researchers can share trained models instead of always retraining
-- Practitioners can reduce compute time and production costs
-- Dozens of architectures with over 1,000 pretrained models, some in more than 100 languages
-
-Choose the right framework for every part of a model's lifetime
-- Train state-of-the-art models in 3 lines of code
-- Deep interoperability between TensorFlow 2.0 and PyTorch models
-- Move a single model between TF2.0/PyTorch frameworks at will
-- Seamlessly pick the right framework for training, evaluation, production
+The illustration of GCN-based Entity-aware Answer Encoder.
 
 
-| Section | Description |
-|-|-|
-| [Installation](#installation) | How to install the package |
-| [Model architectures](#model-architectures) | Architectures (with pretrained weights) |
-| [Online demo](#online-demo) | Experimenting with this repo’s text generation capabilities |
-| [Quick tour: Usage](#quick-tour) | Tokenizers & models usage: Bert and GPT-2 |
-| [Quick tour: TF 2.0 and PyTorch ](#Quick-tour-TF-20-training-and-PyTorch-interoperability) | Train a TF 2.0 model in 10 lines of code, load it in PyTorch |
-| [Quick tour: pipelines](#quick-tour-of-pipelines) | Using Pipelines: Wrapper around tokenizer and models to use finetuned models |
-| [Quick tour: Fine-tuning/usage scripts](#quick-tour-of-the-fine-tuningusage-scripts) | Using provided scripts: GLUE, SQuAD and Text generation |
-| [Quick tour: Share your models ](#Quick-tour-of-model-sharing) | Upload and share your fine-tuned models with the community |
-| [Migrating from pytorch-transformers to transformers](#Migrating-from-pytorch-transformers-to-transformers) | Migrating your code from pytorch-transformers to transformers |
-| [Migrating from pytorch-pretrained-bert to pytorch-transformers](#Migrating-from-pytorch-pretrained-bert-to-transformers) | Migrating your code from pytorch-pretrained-bert to transformers |
-| [Documentation](https://huggingface.co/transformers/) | Full API documentation and more |
+## Dependencies
+python 3, pytorch, boto3
+
+Or you can use `conda` environment yml file (multi-qg.yml) to create your conda environment by running
+```
+conda env create -f multi-qg.yml
+```
+or try the 
+```
+pip install -r requirement.txt
+```
+
+## Experiments
+
+### Download Data
+
+#### HotpotQA Data
+Download the [hotpot QA train and test data](https://github.com/hotpotqa/hotpot) and put them under `./hotpot/data/`.
+
+#### Glove Embedding
+Download the glove embedding and unzip 'glove.840B.300d.txt' and put it under `./glove/glove.840B.300d.txt`
+
+#### Bert Models
+We use the Bert models in the paragraph selection part.
+You should download and set bert pretrained model and vocabulary properly.
+You can find the download links in *paragraph_selection/pytorch_pretrained_bert/modeling.py* row **40-51**, and *paragraph_selection/pytorch_pretrained_bert/tokenization.py* row **30-41**.
+After you finish downloading, you should replace the dict value with your own local path accordingly.
+
+### Preprocessed Data
+
+You can directly download our preprocessed train & dev data of HotpotQA from the [link](https://drive.google.com/drive/folders/1zV03LosHm55RLOJoRoF0KwXB9bm7Z7zH?usp=sharing) 
+
+Extract all compressed files into **./hotpot/** folder.
+
+Also you can preprocess by yourself following the instructions in the next section.
+
+### Preprocess 
+
+Previously we provided intermediate data files for training MulQG. Now you can also run the following preprocessing.
+The preprocessing phase consists of paragraph selection, named entity recognition, and graph construction.
+
+
+* Step 1.1: First, download model checkpoints and save them in **./work_dir** 
+  - [bert_ner.pt](https://drive.google.com/file/d/1KneaQDpZ3uWXUEQCS-nC4OQQT8VBsLJr/view?usp=sharing)
+  - [para_select_model.bin](https://drive.google.com/file/d/10kTPjd-OXXROzqAyz8vVuWBNvuwolHA1/view?usp=sharing)
+
+
+* Step 2: Run the data preprocessing (change the input and output path to your own)
+```
+sh ./run_preprocess.sh
+```
+
+* Step 3: Run the process_hotpot.py (to obtain the `embedding.pkl` and `word2idx.pkl`)
+
+
+### Released Checkpoints
+
+We also released our pretrained model for reproduction.
+* [MulQG_BFS.tar.gz](https://drive.google.com/file/d/1NCMDg8j3VsvQ3ul1FjBk6l_TT9c7urQB/view?usp=sharing)
+
+### Training
+
+* Step 4: Run the training  
+
+```
+sh ./run_train.sh 
+```
+
+```
+python3 -m GPG.main --use_cuda --schedule --ans_update --q_attn --is_coverage --use_copy --batch_size=36 --beam_search --gpus=0,1,2 --position_embeddings_flag
+
+```
+Change the configuration file in *GPG/config.py* with proper data path, eg, the log path, the output model path, so on.
+If an OOM exception occurs, you may try to set a smaller batch size with gradient_accumulate_step > 1.
+Your checkpoints in each epoch will be stored in  *./output/* directory respectively. or you can change the path in *GPG/config.py*.
+
+### Inference
+
+* Step 5: Do the inference, and the prediction results will be under *./prediction/*  (you may modify other configurations in *GPG/config.py* file)
+```
+sh ./run_inference.sh
+```
+You can do the inference using our released model [MulQG_BFS.tar.gz](https://drive.google.com/file/d/1NCMDg8j3VsvQ3ul1FjBk6l_TT9c7urQB/view?usp=sharing), with the following command:
+
+```
+python3 -m GPG.main --notrain --max_tgt_len=30 --min_tgt_len=8 --beam_size=10 --use_cuda --ans_update --q_attn --is_coverage --use_copy --batch_size=20 --beam_search --gpus=0 --position_embeddings_flag --restore="./output/GraphPointerGenerator/MulQG_BFS_checkpoint.pt"
+
+```
+
+### Evaluation
+
+* Step 6: Do the evaluation. We calculate the **BLEU** and **METOR**, and **ROUGE** score via [**nlg-eval**](https://github.com/Maluuba/nlg-eval), and the **Answerability** and **QBLEU** metrics via [Answeriblity-Metric](https://github.com/PrekshaNema25/Answerability-Metric). You may need to install them.
+
+We also upload our prediction output as in *./prediction/* directory, using [**nlg-eval**](https://github.com/Maluuba/nlg-eval) packages via:
+
+```
+nlg-eval --hypothesis=./prediction/candidate.txt --references=./predictioin/golden.txt
+```
+
+you will get *nlg-eval* results like:
+
+```
+Bleu_1: 0.401475
+Bleu_2: 0.267142
+Bleu_3: 0.197256
+Bleu_4: 0.151990
+METEOR: 0.205085
+ROUGE_L: 0.352992
+```
+
+Also, follow the instructions [Answeriblity-Metric](https://github.com/PrekshaNema25/Answerability-Metric) to measure the *Answerability* and *QBLEU* metircs.
+
+```
+python3 answerability_score.py --data_type squad --ref_file ./prediction/golden.txt --hyp_file ./prediction/candidate.txt --ner_weight 0.6 --qt_weight 0.2 --re_weight 0.1 --delta 0.7 --ngram_metric Bleu_4
+```
+then you will get the *QBLEU4* as in (according to the paper, this should be the QBLEU-4 value, just ignore the words)
 
 ## Installation
 
@@ -177,524 +268,6 @@ Min, Patrick Lewis, Ledell Wu, Sergey Edunov, Danqi Chen, and Wen-tau Yih.
 
 These implementations have been tested on several datasets (see the example scripts) and should match the performances of the original implementations (e.g. ~93 F1 on SQuAD for BERT Whole-Word-Masking, ~88 F1 on RocStories for OpenAI GPT, ~18.3 perplexity on WikiText 103 for Transformer-XL, ~0.916 Pearson R coefficient on STS-B for XLNet). You can find more details on the performances in the Examples section of the [documentation](https://huggingface.co/transformers/examples.html).
 
-## Online demo
-
-You can test our inference API on most model pages from the model hub: https://huggingface.co/models
-
-For example: 
-- [Masked word completion with BERT](https://huggingface.co/bert-base-uncased?text=Paris+is+the+%5BMASK%5D+of+France)
-- [NER with Electra](https://huggingface.co/dbmdz/electra-large-discriminator-finetuned-conll03-english?text=My+name+is+Sarah+and+I+live+in+London+city)
-- [Text generation with GPT-2](https://huggingface.co/gpt2?text=A+long+time+ago%2C+)
-- [NLI with RoBERTa](https://huggingface.co/roberta-large-mnli?text=The+dog+was+lost.+Nobody+lost+any+animal)
-- [Summarization with BART](https://huggingface.co/facebook/bart-large-cnn?text=The+tower+is+324+metres+%281%2C063+ft%29+tall%2C+about+the+same+height+as+an+81-storey+building%2C+and+the+tallest+structure+in+Paris.+Its+base+is+square%2C+measuring+125+metres+%28410+ft%29+on+each+side.+During+its+construction%2C+the+Eiffel+Tower+surpassed+the+Washington+Monument+to+become+the+tallest+man-made+structure+in+the+world%2C+a+title+it+held+for+41+years+until+the+Chrysler+Building+in+New+York+City+was+finished+in+1930.+It+was+the+first+structure+to+reach+a+height+of+300+metres.+Due+to+the+addition+of+a+broadcasting+aerial+at+the+top+of+the+tower+in+1957%2C+it+is+now+taller+than+the+Chrysler+Building+by+5.2+metres+%2817+ft%29.+Excluding+transmitters%2C+the+Eiffel+Tower+is+the+second+tallest+free-standing+structure+in+France+after+the+Millau+Viaduct)
-- [Question answering with DistilBERT](https://huggingface.co/distilbert-base-uncased-distilled-squad?text=Which+name+is+also+used+to+describe+the+Amazon+rainforest+in+English%3F&context=The+Amazon+rainforest+%28Portuguese%3A+Floresta+Amaz%C3%B4nica+or+Amaz%C3%B4nia%3B+Spanish%3A+Selva+Amaz%C3%B3nica%2C+Amazon%C3%ADa+or+usually+Amazonia%3B+French%3A+For%C3%AAt+amazonienne%3B+Dutch%3A+Amazoneregenwoud%29%2C+also+known+in+English+as+Amazonia+or+the+Amazon+Jungle%2C+is+a+moist+broadleaf+forest+that+covers+most+of+the+Amazon+basin+of+South+America.+This+basin+encompasses+7%2C000%2C000+square+kilometres+%282%2C700%2C000+sq+mi%29%2C+of+which+5%2C500%2C000+square+kilometres+%282%2C100%2C000+sq+mi%29+are+covered+by+the+rainforest.+This+region+includes+territory+belonging+to+nine+nations.+The+majority+of+the+forest+is+contained+within+Brazil%2C+with+60%25+of+the+rainforest%2C+followed+by+Peru+with+13%25%2C+Colombia+with+10%25%2C+and+with+minor+amounts+in+Venezuela%2C+Ecuador%2C+Bolivia%2C+Guyana%2C+Suriname+and+French+Guiana.+States+or+departments+in+four+nations+contain+%22Amazonas%22+in+their+names.+The+Amazon+represents+over+half+of+the+planet%27s+remaining+rainforests%2C+and+comprises+the+largest+and+most+biodiverse+tract+of+tropical+rainforest+in+the+world%2C+with+an+estimated+390+billion+individual+trees+divided+into+16%2C000+species)
-- [Translation with T5](https://huggingface.co/t5-base?text=My+name+is+Wolfgang+and+I+live+in+Berlin)
-
-
-**[Write With Transformer](https://transformer.huggingface.co)**, built by the Hugging Face team at transformer.huggingface.co, is the official demo of this repo’s text generation capabilities.
-
-## Quick tour
-
-Let's do a very quick overview of the model architectures in 🤗 Transformers. Detailed examples for each model architecture (Bert, GPT, GPT-2, Transformer-XL, XLNet and XLM) can be found in the [full documentation](https://huggingface.co/transformers/).
-
-```python
-import torch
-from transformers import *
-
-# Transformers has a unified API
-# for 10 transformer architectures and 30 pretrained weights.
-#          Model          | Tokenizer          | Pretrained weights shortcut
-MODELS = [(BertModel,       BertTokenizer,       'bert-base-uncased'),
-          (OpenAIGPTModel,  OpenAIGPTTokenizer,  'openai-gpt'),
-          (GPT2Model,       GPT2Tokenizer,       'gpt2'),
-          (CTRLModel,       CTRLTokenizer,       'ctrl'),
-          (TransfoXLModel,  TransfoXLTokenizer,  'transfo-xl-wt103'),
-          (XLNetModel,      XLNetTokenizer,      'xlnet-base-cased'),
-          (XLMModel,        XLMTokenizer,        'xlm-mlm-enfr-1024'),
-          (DistilBertModel, DistilBertTokenizer, 'distilbert-base-cased'),
-          (RobertaModel,    RobertaTokenizer,    'roberta-base'),
-          (XLMRobertaModel, XLMRobertaTokenizer, 'xlm-roberta-base'),
-         ]
-
-# To use TensorFlow 2.0 versions of the models, simply prefix the class names with 'TF', e.g. `TFRobertaModel` is the TF 2.0 counterpart of the PyTorch model `RobertaModel`
-
-# Let's encode some text in a sequence of hidden-states using each model:
-for model_class, tokenizer_class, pretrained_weights in MODELS:
-    # Load pretrained model/tokenizer
-    tokenizer = tokenizer_class.from_pretrained(pretrained_weights)
-    model = model_class.from_pretrained(pretrained_weights)
-
-    # Encode text
-    input_ids = torch.tensor([tokenizer.encode("Here is some text to encode", add_special_tokens=True)])  # Add special tokens takes care of adding [CLS], [SEP], <s>... tokens in the right way for each model.
-    with torch.no_grad():
-        last_hidden_states = model(input_ids)[0]  # Models outputs are now tuples
-
-# Each architecture is provided with several class for fine-tuning on down-stream tasks, e.g.
-BERT_MODEL_CLASSES = [BertModel, BertForPreTraining, BertForMaskedLM, BertForNextSentencePrediction,
-                      BertForSequenceClassification, BertForTokenClassification, BertForQuestionAnswering]
-
-# All the classes for an architecture can be initiated from pretrained weights for this architecture
-# Note that additional weights added for fine-tuning are only initialized
-# and need to be trained on the down-stream task
-pretrained_weights = 'bert-base-uncased'
-tokenizer = BertTokenizer.from_pretrained(pretrained_weights)
-for model_class in BERT_MODEL_CLASSES:
-    # Load pretrained model/tokenizer
-    model = model_class.from_pretrained(pretrained_weights)
-
-    # Models can return full list of hidden-states & attentions weights at each layer
-    model = model_class.from_pretrained(pretrained_weights,
-                                        output_hidden_states=True,
-                                        output_attentions=True)
-    input_ids = torch.tensor([tokenizer.encode("Let's see all hidden-states and attentions on this text")])
-    all_hidden_states, all_attentions = model(input_ids)[-2:]
-
-    # Models are compatible with Torchscript
-    model = model_class.from_pretrained(pretrained_weights, torchscript=True)
-    traced_model = torch.jit.trace(model, (input_ids,))
-
-    # Simple serialization for models and tokenizers
-    model.save_pretrained('./directory/to/save/')  # save
-    model = model_class.from_pretrained('./directory/to/save/')  # re-load
-    tokenizer.save_pretrained('./directory/to/save/')  # save
-    tokenizer = BertTokenizer.from_pretrained('./directory/to/save/')  # re-load
-
-    # SOTA examples for GLUE, SQUAD, text generation...
-```
-
-## Quick tour TF 2.0 training and PyTorch interoperability
-
-Let's do a quick example of how a TensorFlow 2.0 model can be trained in 12 lines of code with 🤗 Transformers and then loaded in PyTorch for fast inspection/tests.
-
-```python
-import tensorflow as tf
-import tensorflow_datasets
-from transformers import *
-
-# Load dataset, tokenizer, model from pretrained model/vocabulary
-tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
-model = TFBertForSequenceClassification.from_pretrained('bert-base-cased')
-data = tensorflow_datasets.load('glue/mrpc')
-
-# Prepare dataset for GLUE as a tf.data.Dataset instance
-train_dataset = glue_convert_examples_to_features(data['train'], tokenizer, max_length=128, task='mrpc')
-valid_dataset = glue_convert_examples_to_features(data['validation'], tokenizer, max_length=128, task='mrpc')
-train_dataset = train_dataset.shuffle(100).batch(32).repeat(2)
-valid_dataset = valid_dataset.batch(64)
-
-# Prepare training: Compile tf.keras model with optimizer, loss and learning rate schedule
-optimizer = tf.keras.optimizers.Adam(learning_rate=3e-5, epsilon=1e-08, clipnorm=1.0)
-loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
-model.compile(optimizer=optimizer, loss=loss, metrics=[metric])
-
-# Train and evaluate using tf.keras.Model.fit()
-history = model.fit(train_dataset, epochs=2, steps_per_epoch=115,
-                    validation_data=valid_dataset, validation_steps=7)
-
-# Load the TensorFlow model in PyTorch for inspection
-model.save_pretrained('./save/')
-pytorch_model = BertForSequenceClassification.from_pretrained('./save/', from_tf=True)
-
-# Quickly test a few predictions - MRPC is a paraphrasing task, let's see if our model learned the task
-sentence_0 = "This research was consistent with his findings."
-sentence_1 = "His findings were compatible with this research."
-sentence_2 = "His findings were not compatible with this research."
-inputs_1 = tokenizer(sentence_0, sentence_1, add_special_tokens=True, return_tensors='pt')
-inputs_2 = tokenizer(sentence_0, sentence_2, add_special_tokens=True, return_tensors='pt')
-
-pred_1 = pytorch_model(inputs_1['input_ids'], token_type_ids=inputs_1['token_type_ids'])[0].argmax().item()
-pred_2 = pytorch_model(inputs_2['input_ids'], token_type_ids=inputs_2['token_type_ids'])[0].argmax().item()
-
-print("sentence_1 is", "a paraphrase" if pred_1 else "not a paraphrase", "of sentence_0")
-print("sentence_2 is", "a paraphrase" if pred_2 else "not a paraphrase", "of sentence_0")
-```
-
-## Quick tour of the fine-tuning/usage scripts
-
-**Important**
-Before running the fine-tuning scripts, please read the
-[instructions](#run-the-examples) on how to
-setup your environment to run the examples.
-
-The library comprises several example scripts with SOTA performances for NLU and NLG tasks:
-
-- `run_glue.py`: an example fine-tuning sequence classification models on nine different GLUE tasks (*sequence-level classification*)
-- `run_squad.py`: an example fine-tuning question answering models on the question answering dataset SQuAD 2.0 (*token-level classification*)
-- `run_ner.py`: an example fine-tuning token classification models on named entity recognition (*token-level classification*)
-- `run_generation.py`: an example using GPT, GPT-2, CTRL, Transformer-XL and XLNet for conditional language generation
-- other model-specific examples (see the documentation).
-
-Here are three quick usage examples for these scripts:
-
-### `run_glue.py`: Fine-tuning on GLUE tasks for sequence classification
-
-The [General Language Understanding Evaluation (GLUE) benchmark](https://gluebenchmark.com/) is a collection of nine sentence- or sentence-pair language understanding tasks for evaluating and analyzing natural language understanding systems.
-
-Before running any of these GLUE tasks you should download the
-[GLUE data](https://gluebenchmark.com/tasks) by running
-[this script](https://gist.github.com/W4ngatang/60c2bdb54d156a41194446737ce03e2e)
-and unpack it to some directory `$GLUE_DIR`.
-
-You should also install the additional packages required by the examples:
-
-```shell
-pip install -r ./examples/requirements.txt
-```
-
-```shell
-export GLUE_DIR=/path/to/glue
-export TASK_NAME=MRPC
-
-python ./examples/text-classification/run_glue.py \
-    --model_name_or_path bert-base-uncased \
-    --task_name $TASK_NAME \
-    --do_train \
-    --do_eval \
-    --data_dir $GLUE_DIR/$TASK_NAME \
-    --max_seq_length 128 \
-    --per_device_eval_batch_size=8   \
-    --per_device_train_batch_size=8   \
-    --learning_rate 2e-5 \
-    --num_train_epochs 3.0 \
-    --output_dir /tmp/$TASK_NAME/
-```
-
-where task name can be one of CoLA, SST-2, MRPC, STS-B, QQP, MNLI, QNLI, RTE, WNLI.
-
-The dev set results will be present within the text file 'eval_results.txt' in the specified output_dir. In case of MNLI, since there are two separate dev sets, matched and mismatched, there will be a separate output folder called '/tmp/MNLI-MM/' in addition to '/tmp/MNLI/'.
-
-#### Fine-tuning XLNet model on the STS-B regression task
-
-This example code fine-tunes XLNet on the STS-B corpus using parallel training on a server with 4 V100 GPUs.
-Parallel training is a simple way to use several GPUs (but is slower and less flexible than distributed training, see below).
-
-```shell
-export GLUE_DIR=/path/to/glue
-
-python ./examples/text-classification/run_glue.py \
-    --model_name_or_path xlnet-large-cased \
-    --do_train  \
-    --do_eval   \
-    --task_name=sts-b     \
-    --data_dir=${GLUE_DIR}/STS-B  \
-    --output_dir=./proc_data/sts-b-110   \
-    --max_seq_length=128   \
-    --per_device_eval_batch_size=8   \
-    --per_device_train_batch_size=8   \
-    --gradient_accumulation_steps=1 \
-    --max_steps=1200  \
-    --model_name=xlnet-large-cased   \
-    --overwrite_output_dir   \
-    --overwrite_cache \
-    --warmup_steps=120
-```
-
-On this machine we thus have a batch size of 32, please increase `gradient_accumulation_steps` to reach the same batch size if you have a smaller machine. These hyper-parameters should result in a Pearson correlation coefficient of `+0.917` on the development set.
-
-#### Fine-tuning Bert model on the MRPC classification task
-
-This example code fine-tunes the Bert Whole Word Masking model on the Microsoft Research Paraphrase Corpus (MRPC) corpus using distributed training on 8 V100 GPUs to reach a F1 > 92.
-
-```bash
-python -m torch.distributed.launch --nproc_per_node 8 ./examples/text-classification/run_glue.py   \
-    --model_name_or_path bert-large-uncased-whole-word-masking \
-    --task_name MRPC \
-    --do_train   \
-    --do_eval   \
-    --data_dir $GLUE_DIR/MRPC/   \
-    --max_seq_length 128   \
-    --per_device_eval_batch_size=8   \
-    --per_device_train_batch_size=8   \
-    --learning_rate 2e-5   \
-    --num_train_epochs 3.0  \
-    --output_dir /tmp/mrpc_output/ \
-    --overwrite_output_dir   \
-    --overwrite_cache \
-```
-
-Training with these hyper-parameters gave us the following results:
-
-```bash
-  acc = 0.8823529411764706
-  acc_and_f1 = 0.901702786377709
-  eval_loss = 0.3418912578906332
-  f1 = 0.9210526315789473
-  global_step = 174
-  loss = 0.07231863956341798
-```
-
-### `run_squad.py`: Fine-tuning on SQuAD for question-answering
-
-This example code fine-tunes BERT on the SQuAD dataset using distributed training on 8 V100 GPUs and Bert Whole Word Masking uncased model to reach a F1 > 93 on SQuAD:
-
-```bash
-python -m torch.distributed.launch --nproc_per_node=8 ./examples/question-answering/run_squad.py \
-    --model_type bert \
-    --model_name_or_path bert-large-uncased-whole-word-masking \
-    --do_train \
-    --do_eval \
-    --train_file $SQUAD_DIR/train-v1.1.json \
-    --predict_file $SQUAD_DIR/dev-v1.1.json \
-    --learning_rate 3e-5 \
-    --num_train_epochs 2 \
-    --max_seq_length 384 \
-    --doc_stride 128 \
-    --output_dir ../models/wwm_uncased_finetuned_squad/ \
-    --per_device_eval_batch_size=3   \
-    --per_device_train_batch_size=3   \
-```
-
-Training with these hyper-parameters gave us the following results:
-
-```bash
-python $SQUAD_DIR/evaluate-v1.1.py $SQUAD_DIR/dev-v1.1.json ../models/wwm_uncased_finetuned_squad/predictions.json
-{"exact_match": 86.91579943235573, "f1": 93.1532499015869}
-```
-
-This is the model provided as `bert-large-uncased-whole-word-masking-finetuned-squad`.
-
-### `run_generation.py`: Text generation with GPT, GPT-2, CTRL, Transformer-XL and XLNet
-
-A conditional generation script is also included to generate text from a prompt.
-The generation script includes the [tricks](https://github.com/rusiaaman/XLNet-gen#methodology) proposed by Aman Rusia to get high-quality generation with memory models like Transformer-XL and XLNet (include a predefined text to make short inputs longer).
-
-Here is how to run the script with the small version of OpenAI GPT-2 model:
-
-```shell
-python ./examples/text-generation/run_generation.py \
-    --model_type=gpt2 \
-    --length=20 \
-    --model_name_or_path=gpt2 \
-```
-
-and from the Salesforce CTRL model:
-```shell
-python ./examples/text-generation/run_generation.py \
-    --model_type=ctrl \
-    --length=20 \
-    --model_name_or_path=ctrl \
-    --temperature=0 \
-    --repetition_penalty=1.2 \
-```
-
-## Quick tour of model sharing
-
-Starting with `v2.2.2`, you can now upload and share your fine-tuned models with the community, using the <abbr title="Command-line interface">CLI</abbr> that's built-in to the library.
-
-**First, create an account on [https://huggingface.co/join](https://huggingface.co/join)**. Optionally, join an existing organization or create a new one. Then:
-
-```shell
-transformers-cli login
-# log in using the same credentials as on huggingface.co
-```
-Upload your model:
-```shell
-transformers-cli upload ./path/to/pretrained_model/
-
-# ^^ Upload folder containing weights/tokenizer/config
-# saved via `.save_pretrained()`
-
-transformers-cli upload ./config.json [--filename folder/foobar.json]
-
-# ^^ Upload a single file
-# (you can optionally override its filename, which can be nested inside a folder)
-```
-
-If you want your model to be namespaced by your organization name rather than your username, add the following flag to any command:
-```shell
---organization organization_name
-```
-
-Your model will then be accessible through its identifier, a concatenation of your username (or organization name) and the folder name above:
-```python
-"username/pretrained_model"
-# or if an org:
-"organization_name/pretrained_model"
-```
-
-**Please add a README.md model card** to the repo under `model_cards/` with: model description, training params (dataset, preprocessing, hardware used, hyperparameters), evaluation results, intended uses & limitations, etc.
-
-Your model now has a page on huggingface.co/models 🔥
-
-Anyone can load it from code:
-```python
-tokenizer = AutoTokenizer.from_pretrained("namespace/pretrained_model")
-model = AutoModel.from_pretrained("namespace/pretrained_model")
-```
-
-List all your files on S3:
-```shell
-transformers-cli s3 ls
-```
-
-You can also delete unneeded files:
-
-```shell
-transformers-cli s3 rm …
-```
-
-## Quick tour of pipelines
-
-New in version `v2.3`: `Pipeline` are high-level objects which automatically handle tokenization, running your data through a transformers model
-and outputting the result in a structured object.
-
-You can create `Pipeline` objects for the following down-stream tasks:
-
- - `feature-extraction`: Generates a tensor representation for the input sequence
- - `ner`: Generates named entity mapping for each word in the input sequence.
- - `sentiment-analysis`: Gives the polarity (positive / negative) of the whole input sequence.
- - `text-classification`: Initialize a `TextClassificationPipeline` directly, or see `sentiment-analysis` for an example.
- - `question-answering`: Provided some context and a question refering to the context, it will extract the answer to the question in the context.
- - `fill-mask`: Takes an input sequence containing a masked token (e.g. `<mask>`) and return list of most probable filled sequences, with their probabilities.
- - `summarization`
- - `translation_xx_to_yy`
-
-```python
->>> from transformers import pipeline
-
-# Allocate a pipeline for sentiment-analysis
->>> nlp = pipeline('sentiment-analysis')
->>> nlp('We are very happy to include pipeline into the transformers repository.')
-[{'label': 'POSITIVE', 'score': 0.9978193640708923}]
-
-# Allocate a pipeline for question-answering
->>> nlp = pipeline('question-answering')
->>> nlp({
-...     'question': 'What is the name of the repository ?',
-...     'context': 'Pipeline have been included in the huggingface/transformers repository'
-... })
-{'score': 0.5135612454720828, 'start': 35, 'end': 59, 'answer': 'huggingface/transformers'}
-
-```
-
-## Migrating from pytorch-transformers to transformers
-
-Here is a quick summary of what you should take care of when migrating from `pytorch-transformers` to `transformers`.
-
-### Positional order of some models' keywords inputs (`attention_mask`, `token_type_ids`...) changed
-
-To be able to use Torchscript (see #1010, #1204 and #1195) the specific order of some models **keywords inputs** (`attention_mask`, `token_type_ids`...) has been changed.
-
-If you used to call the models with keyword names for keyword arguments, e.g. `model(inputs_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)`, this should not cause any change.
-
-If you used to call the models with positional inputs for keyword arguments, e.g. `model(inputs_ids, attention_mask, token_type_ids)`, you may have to double check the exact order of input arguments.
-
-
-## Migrating from pytorch-pretrained-bert to transformers
-
-Here is a quick summary of what you should take care of when migrating from `pytorch-pretrained-bert` to `transformers`.
-
-### Models always output `tuples`
-
-The main breaking change when migrating from `pytorch-pretrained-bert` to `transformers` is that every model's forward method always outputs a `tuple` with various elements depending on the model and the configuration parameters.
-
-The exact content of the tuples for each model is detailed in the models' docstrings and the [documentation](https://huggingface.co/transformers/).
-
-In pretty much every case, you will be fine by taking the first element of the output as the output you previously used in `pytorch-pretrained-bert`.
-
-Here is a `pytorch-pretrained-bert` to `transformers` conversion example for a `BertForSequenceClassification` classification model:
-
-```python
-# Let's load our model
-model = BertForSequenceClassification.from_pretrained('bert-base-uncased')
-
-# If you used to have this line in pytorch-pretrained-bert:
-loss = model(input_ids, labels=labels)
-
-# Now just use this line in transformers to extract the loss from the output tuple:
-outputs = model(input_ids, labels=labels)
-loss = outputs[0]
-
-# In transformers you can also have access to the logits:
-loss, logits = outputs[:2]
-
-# And even the attention weights if you configure the model to output them (and other outputs too, see the docstrings and documentation)
-model = BertForSequenceClassification.from_pretrained('bert-base-uncased', output_attentions=True)
-outputs = model(input_ids, labels=labels)
-loss, logits, attentions = outputs
-```
-
-### Using hidden states
-
-By enabling the configuration option `output_hidden_states`, it was possible to retrieve the last hidden states of the encoder. In `pytorch-transformers` as well as `transformers` the return value has changed slightly: `all_hidden_states` now also includes the hidden state of the embeddings in addition to those of the encoding layers. This allows users to easily access the embeddings final state.
-
-### Serialization
-
-Breaking change in the `from_pretrained()` method:
-
-1. Models are now set in evaluation mode by default when instantiated with the `from_pretrained()` method. To train them, don't forget to set them back in training mode (`model.train()`) to activate the dropout modules.
-
-2. The additional `*input` and `**kwargs` arguments supplied to the `from_pretrained()` method used to be directly passed to the underlying model's class `__init__()` method. They are now used to update the model configuration attribute instead, which can break derived model classes built based on the previous `BertForSequenceClassification` examples. We are working on a way to mitigate this breaking change in [#866](https://github.com/huggingface/transformers/pull/866) by forwarding the model's `__init__()` method (i) the provided positional arguments and (ii) the keyword arguments which do not match any configuration class attributes.
-
-Also, while not a breaking change, the serialization methods have been standardized and you probably should switch to the new method `save_pretrained(save_directory)` if you were using any other serialization method before.
-
-Here is an example:
-
-```python
-### Let's load a model and tokenizer
-model = BertForSequenceClassification.from_pretrained('bert-base-uncased')
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-
-### Do some stuff to our model and tokenizer
-# Ex: add new tokens to the vocabulary and embeddings of our model
-tokenizer.add_tokens(['[SPECIAL_TOKEN_1]', '[SPECIAL_TOKEN_2]'])
-model.resize_token_embeddings(len(tokenizer))
-# Train our model
-train(model)
-
-### Now let's save our model and tokenizer to a directory
-model.save_pretrained('./my_saved_model_directory/')
-tokenizer.save_pretrained('./my_saved_model_directory/')
-
-### Reload the model and the tokenizer
-model = BertForSequenceClassification.from_pretrained('./my_saved_model_directory/')
-tokenizer = BertTokenizer.from_pretrained('./my_saved_model_directory/')
-```
-
-### Optimizers: BertAdam & OpenAIAdam are now AdamW, schedules are standard PyTorch schedules
-
-The two optimizers previously included, `BertAdam` and `OpenAIAdam`, have been replaced by a single `AdamW` optimizer which has a few differences:
-
-- it only implements weights decay correction,
-- schedules are now externals (see below),
-- gradient clipping is now also external (see below).
-
-The new optimizer `AdamW` matches PyTorch `Adam` optimizer API and let you use standard PyTorch or apex methods for the schedule and clipping.
-
-The schedules are now standard [PyTorch learning rate schedulers](https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate) and not part of the optimizer anymore.
-
-Here is a conversion examples from `BertAdam` with a linear warmup and decay schedule to `AdamW` and the same schedule:
-
-```python
-# Parameters:
-lr = 1e-3
-max_grad_norm = 1.0
-num_training_steps = 1000
-num_warmup_steps = 100
-warmup_proportion = float(num_warmup_steps) / float(num_training_steps)  # 0.1
-
-### Previously BertAdam optimizer was instantiated like this:
-optimizer = BertAdam(model.parameters(), lr=lr, schedule='warmup_linear', warmup=warmup_proportion, t_total=num_training_steps)
-### and used like this:
-for batch in train_data:
-    loss = model(batch)
-    loss.backward()
-    optimizer.step()
-
-### In Transformers, optimizer and schedules are splitted and instantiated like this:
-optimizer = AdamW(model.parameters(), lr=lr, correct_bias=False)  # To reproduce BertAdam specific behavior set correct_bias=False
-scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=num_warmup_steps, num_training_steps=num_training_steps)  # PyTorch scheduler
-### and used like this:
-for batch in train_data:
-    model.train()
-    loss = model(batch)
-    loss.backward()
-    torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)  # Gradient clipping is not in AdamW anymore (so you can use amp without issue)
-    optimizer.step()
-    scheduler.step()
-    optimizer.zero_grad()
-```
 
 ## Citation
 
