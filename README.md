@@ -43,7 +43,7 @@ You can download the Debatepedia data via the original [link] (https://github.co
 ### Released Checkpoints
 
 We also released our pretrained model for reproduction.
-* [to be released later](https://drive.google.com/drive/folders/1hwjKhrMaiiCQhsAUl0X__ZjLZCCKGTIJ?usp=sharing)
+* [model](https://drive.google.com/drive/folders/1hwjKhrMaiiCQhsAUl0X__ZjLZCCKGTIJ?usp=sharing)
 
 ### Training/Fine-tuning QFS model
 
